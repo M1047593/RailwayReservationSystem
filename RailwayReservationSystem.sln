@@ -1,0 +1,67 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26403.7
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RailwayReservationSystem", "RailwayReservationSystem\RailwayReservationSystem.csproj", "{78169221-4CAD-41BB-8BAD-5EBD9660524D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Business", "Business", "{CCEA86DC-FC22-4548-88E1-503D1458A74E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{5DE32E0B-D28D-410A-8094-C48925FD0F1A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utilities", "Utilities", "{28793262-EBDF-489A-875F-D91E96A94B92}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "View", "View", "{280C4DDA-DDB5-45B3-AD26-D42656CCA953}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RS.Business", "RS.Business\RS.Business.csproj", "{A23C3540-1C8A-409F-BD2C-D671A46A2DC2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RS.Data", "RS.Data\RS.Data.csproj", "{8887F685-25C2-4AC4-A2E5-8231D3133AEB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RS.Repository", "RS.Repository\RS.Repository.csproj", "{D881EF57-6715-4ABA-8A2F-42BB4A98E9FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RS.Utilities", "RS.Utilities\RS.Utilities.csproj", "{05D03FFD-0971-4D9E-869A-CECA246D110A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RailwayReservation.Services", "RailwayReservation.Services\RailwayReservation.Services.csproj", "{E2142A57-C6E8-4399-93CD-EC45B7022FF1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{78169221-4CAD-41BB-8BAD-5EBD9660524D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78169221-4CAD-41BB-8BAD-5EBD9660524D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78169221-4CAD-41BB-8BAD-5EBD9660524D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78169221-4CAD-41BB-8BAD-5EBD9660524D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A23C3540-1C8A-409F-BD2C-D671A46A2DC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A23C3540-1C8A-409F-BD2C-D671A46A2DC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A23C3540-1C8A-409F-BD2C-D671A46A2DC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A23C3540-1C8A-409F-BD2C-D671A46A2DC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8887F685-25C2-4AC4-A2E5-8231D3133AEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8887F685-25C2-4AC4-A2E5-8231D3133AEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8887F685-25C2-4AC4-A2E5-8231D3133AEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8887F685-25C2-4AC4-A2E5-8231D3133AEB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D881EF57-6715-4ABA-8A2F-42BB4A98E9FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D881EF57-6715-4ABA-8A2F-42BB4A98E9FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D881EF57-6715-4ABA-8A2F-42BB4A98E9FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D881EF57-6715-4ABA-8A2F-42BB4A98E9FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05D03FFD-0971-4D9E-869A-CECA246D110A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05D03FFD-0971-4D9E-869A-CECA246D110A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05D03FFD-0971-4D9E-869A-CECA246D110A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05D03FFD-0971-4D9E-869A-CECA246D110A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2142A57-C6E8-4399-93CD-EC45B7022FF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2142A57-C6E8-4399-93CD-EC45B7022FF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2142A57-C6E8-4399-93CD-EC45B7022FF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2142A57-C6E8-4399-93CD-EC45B7022FF1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{78169221-4CAD-41BB-8BAD-5EBD9660524D} = {280C4DDA-DDB5-45B3-AD26-D42656CCA953}
+		{A23C3540-1C8A-409F-BD2C-D671A46A2DC2} = {CCEA86DC-FC22-4548-88E1-503D1458A74E}
+		{8887F685-25C2-4AC4-A2E5-8231D3133AEB} = {5DE32E0B-D28D-410A-8094-C48925FD0F1A}
+		{D881EF57-6715-4ABA-8A2F-42BB4A98E9FF} = {5DE32E0B-D28D-410A-8094-C48925FD0F1A}
+		{05D03FFD-0971-4D9E-869A-CECA246D110A} = {28793262-EBDF-489A-875F-D91E96A94B92}
+	EndGlobalSection
+EndGlobal

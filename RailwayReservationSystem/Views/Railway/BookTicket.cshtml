@@ -1,0 +1,449 @@
+﻿
+@{
+    ViewBag.Title = "BookTicket";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+
+
+}
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/moment.js"></script>
+<script>
+
+    $(document).ready(function () {
+        var Seatclass = GetParameterValues('Seatclass');
+        $('#hdnseat').val(Seatclass);
+        function GetParameterValues(param) {
+            var url = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+            for (var i = 0; i < url.length; i++) {
+                var urlparam = url[i].split('=');
+                if (urlparam[0] == param) {
+                    return urlparam[1];
+                }
+            }
+        }
+    });
+</script>
+
+<script type='text/javascript'>
+    //$(document).ready(function () {
+
+    //    $('#Jdate').datepicker({
+    //        dateFormat: 'dd-mm-yy'
+    //    });
+
+    //});
+    function FillTrainDetail() {
+        $.ajax({
+            url: '@Url.Action("FillTrainDetail", "Railway")',
+            type: "GET",
+            data: { Trainname: $('#TrainName').val()},
+            success: function (result) {
+
+                $('#ddltrain').val(result[0].Destination_stn)
+                $('#ddlstation').val(result[0].Source_stn)
+                $('#TrainID').val(result[0].Train_ID)
+
+            },
+            error: function (errormessage) {
+                        alert(errormessage.responseText);
+                    }
+                });
+    }
+
+
+
+    function getval(sel) {
+        $.ajax({
+            url: '@Url.Action("FillClassFare", "Railway")',
+            type: "GET",
+            data: { Trainname: $('#TrainName').val(), classid: sel.value},
+            success: function (result) {
+                debugger
+                $('#Fare').val(result);
+
+            },
+            error: function (errormessage) {
+                        alert(errormessage.responseText);
+                    }
+                });
+    }
+
+    function AddReservation() {
+        confirm("Please confirm once again")
+        debugger
+        var Trainname = $('#ddltrainname').text();
+        var TrainID = $('#TrainID').val();
+        var ddlstation = $('#ddlstation').val();
+        var ddltrain = $('#ddltrain').val();
+        var source = $('#ddlstation').text();
+        var desc = $('#ddltrain').text();
+        var Jdate = $('#Jdate').val();
+        var Fare = $('#Fare').val();
+        var mnumber = $('#mnumber').val();
+        var Name = $('#Name').val();
+        var Age = $('#Age').val();
+        var ddlgender = $("#ddlgender").val();
+        var ddlpreference = $("#ddlpreference option:selected").val();
+        var ddlproof = $("#ddlproof option:selected").val();
+        var Name1 = $('#Name1').val();
+        var Age1 = $('#Age1').val();
+        var ddlgender1 = $("#ddlgender1").val();
+        var ddlpreference1 = $("#ddlpreference1 option:selected").val();
+        var ddlproof1 = $("#ddlproof1 option:selected").val();
+
+        var Noofticket = $('#hdnseat').val();
+
+        $.ajax({
+            url: '@Url.Action("SaveBookticket", "Railway")',
+            type: "GET",
+            data: { Trainname: Trainname, TrainID: TrainID, ddlstation: ddlstation, ddltrain: ddltrain, Jdate: Jdate, Fare: Fare, mnumber: mnumber, Name: Name, Age: Age, ddlgender: ddlgender, ddlpreference: ddlpreference, ddlproof: ddlproof, Noofticket: Noofticket, Name1: Name1, Age1: Age1, ddlgender1: ddlgender1, ddlpreference1: ddlpreference1, ddlproof1: ddlproof1},
+            success: function (result) {
+                if (result[0] > 1)
+                {
+                    $('input[type=text],input[type=number],input[type=Date],input[type=email],input[type=password], select').val("");
+                    alert("Ticket Booked succesfully");
+                    if (result[0] > 1) {
+                        debugger
+                        jQuery("label[for='Train_ID']").html(TrainID);
+                        jQuery("label[for='Train_name']").html(Trainname);
+                        jQuery("label[for='Source']").html(source);
+                        jQuery("label[for='Destination']").html(desc);
+                        jQuery("label[for='fare']").html(result[2]);
+                        jQuery("label[for='Pnr']").html(result[0]);
+                        jQuery("label[for='P1']").html(Name);
+                        jQuery("label[for='G1']").html(ddlgender);
+                        jQuery("label[for='S1']").html(result[1]);
+                        jQuery("label[for='SL1']").html(ddlpreference);
+                        jQuery("label[for='P2']").html(Name1);
+                        jQuery("label[for='G2']").html(ddlgender1);
+                        jQuery("label[for='S2']").html(result[4]);
+                        jQuery("label[for='SL2']").html(ddlpreference1);
+
+                    }
+                    $('#myModal').modal('show');
+                    $('#btnUpdate').show();
+                    $('#btnAdd').hide();
+
+                }
+
+            },
+            error: function (errormessage) {
+                        alert(errormessage.responseText);
+                    }
+                });
+    }
+
+
+</script>
+
+<div id="divSuccess" class="alert alert-success alert-dismissible" style="display:none">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <strong>Success!</strong> This alert box could indicate a successful or positive action.
+</div>
+<fieldset>
+    <legend class="text-center">Book Ticket<span class="req"></span></legend>
+    <input type="hidden" id="hdnseat" />
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="source"><span class="req">* </span> Train Name: </label>
+            @Html.DropDownList("TrainName", ViewBag.Train as SelectList, new { @class = "form-control", @onchange = "FillTrainDetail()", id = "ddltrainname" })
+            <div id="errFirst"></div>
+        </div>
+        <div class="form-group">
+            <label for="email"><span class="req">* </span> Train Number: </label>
+            <input class="form-control" required type="number" name="TrainID" id="TrainID" value="@ViewBag.TrainID" readonly />
+            <div class="status" id="status"></div>
+        </div>
+
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label for="source"><span class="req">* </span> Source Station: </label>
+            @Html.DropDownList("Source_ID", ViewBag.SourceStation as SelectList, new { @class = "form-control", id = "ddlstation" })
+            <div id="errLast"></div>
+
+        </div>
+        <div class="form-group">
+            <label for="source"><span class="req">* </span> Destination Station: </label>
+            @Html.DropDownList("Destination_ID", ViewBag.DestinationStation as SelectList, new { @class = "form-control", id = "ddltrain" })
+            <div id="errLast"></div>
+
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="firstname"><span class="req">* </span>Journey Date </label>
+            <input class="form-control" name="Jdate" id="Jdate" value="@ViewBag.Journeydate" required readonly />
+            <div id="errFirst"></div>
+        </div>
+        <div class="form-group">
+            <label for="email"><span class="req"> </span>Ticket Fare</label>
+            <input class="form-control" required type="text" name="Fare" id="Fare" value="@ViewBag.Fare" readonly />
+            <div class="status" id="status"></div>
+        </div>
+        @*<div class="form-group">
+                <label for="lastname"><span class="req">* </span> Class: </label>
+                <select class="form-control" id="ddlclass">
+                    <option value="-1">Select Class</option>
+                    <option value="1">Class 1</option>
+                    <option value="2">Class 2</option>
+                    <option value="3">Class 3</option>
+                </select>
+                <div id="errLast"></div>
+            </div>*@
+
+    </div>
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="firstname"><span class="req">* </span>Email </label>
+            <input class="form-control" type="email" name="mnumber" id="mnumber" required />
+            <div id="errFirst"></div>
+        </div>
+
+
+    </div>
+    <div class="col-md-12">
+        <div class="form-group">
+            <table class="table table-sm  fz12" id="tblpass">
+                <thead class="text-uppercase">
+                    <tr>
+                        <th scope="col" style="width: 600px;"><strong>Name</strong></th>
+                        <th scope="col" style="width: 300px;"><strong>Age</strong></th>
+                        <th scope="col" style="width: 320px;"><strong>Gender</strong> </th>
+                        <th scope="col" style="width: 520px;"><strong>Preference</strong> </th>
+                        <th scope="col" style="width: 520px;"><strong>Proof</strong> </th>
+                    </tr>
+
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <input class="form-control" type="text" name="Name" id="Name" placeholder="" />
+                        </td>
+                        <td style="width:300px">
+                            <input class="form-control" type="number" name="Age" id="Age" placeholder="" />
+                        </td>
+                        <td>
+
+                            <select class="form-control" id="ddlgender">
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Transgender">Transgender</option>
+                            </select>
+                        </td>
+                        <td>
+
+                            <select class="form-control" id="ddlpreference"><option value="Lower">Lower</option><option value="Middle">Middle</option><option value="Upper">Upper</option><option value="SideLower">SideLower</option><option value="SideUpper">SideUpper</option></select>
+                        </td>
+                        <td>
+                            <select class="form-control" id="ddlproof">
+                                <option value="Pan">Pan Card</option>
+                                <option value="Aadhaar">Aadhaar Card</option>
+                                <option value="DrivingLicense">Driving License</option>
+                                <option value="VoterID">Voter ID</option>
+                            </select>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <input class="form-control" type="text" name="Name1" id="Name1" placeholder="" />
+                        </td>
+                        <td style="width:300px">
+                            <input class="form-control" type="number" name="Age1" id="Age1" placeholder="" />
+                        </td>
+                        <td>
+
+                            <select class="form-control" id="ddlgender1">
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Transgender">Transgender</option>
+                            </select>
+                        </td>
+                        <td>
+
+                            <select class="form-control" id="ddlpreference1">
+                                <option value="Lower">Lower</option>
+                                <option value="Middle">Middle</option>
+                                <option value="Upper">Upper</option>
+                                <option value="SideLower">SideLower</option>
+                                <option value="SideUpper">SideUpper</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select class="form-control" id="ddlproof1">
+                                <option value="Lower">Pan Card</option>
+                                <option value="Middle">Aadhaar Card</option>
+                                <option value="Upper">Driving License</option>
+                                <option value="SideLower">Voter ID</option>
+                            </select>
+                        </td>
+                    </tr>
+                    @*<tr>
+                            <td>
+                                <input class="form-control" type="text" name="Name2" id="Name2"  placeholder=""  />
+                            </td>
+                            <td style="width:300px">
+                                <input class="form-control" type="number" name="Age2" id="Age2" placeholder=""  />
+                            </td>
+                            <td>
+
+                                <select class="form-control" id="ddlgender2">
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Transgender">Transgender</option>
+                                </select>
+                            </td>
+                            <td>
+
+                                <select class="form-control" id="ddlpreference2">
+                                    <option value="Lower">Lower</option>
+                                    <option value="Middle">Middle</option>
+                                    <option value="Upper">Upper</option>
+                                    <option value="SideLower">SideLower</option>
+                                    <option value="SideUpper">SideUpper</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="form-control" id="ddlproof2">
+                                    <option value="Lower">Pan Card</option>
+                                    <option value="Middle">Aadhaar Card</option>
+                                    <option value="Upper">Driving License</option>
+                                    <option value="SideLower">Voter ID</option>
+                                </select>
+                            </td>
+
+                        </tr>*@
+
+
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+    <div class="col-md-12" style="margin-left:30%">
+        <div class="form-group">
+            <input class="btn btn-success" type="submit" name="submit_reg" value="Book Ticket" onclick="return AddReservation();">
+            <input class="btn btn-success" type="submit" name="submit_reg" value="Replan">
+        </div>
+    </div>
+</fieldset>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="margin-right:100%">
+        <div class="modal-content">
+            <div class="modal-header">
+                @*<button type="button" class="close" data-dissmiss="modal"><span aria-hidden="true">×</span></button>*@
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title" id="myModalLabel">Print Ticket</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="TrainID"> Train ID : </label>
+                            <label for="Train_ID" style="font-weight:bold;margin-left: 10px;"></label>
+                            <div id="errFirst"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="Trainname">Train name : </label>
+                            <label for="Train_name" style="font-weight:bold;margin-left: 10px;"></label>
+                            <div id="errLast"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="TrainID"> Source : </label>
+                            <label for="Source" style="font-weight:bold;margin-left: 10px;" ></label>
+                            <div id="errFirst"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="Trainname">Destination : </label>
+                            <label for="Destination" style="font-weight:bold;margin-left: 10px;" ></label>
+                            <div id="errLast"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="TrainID"> Fare : </label>
+                            <label for="fare" style="font-weight:bold;margin-left: 10px;" ></label>
+                            <div id="errFirst"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="Trainname">PNR : </label>
+                            <label for="Pnr" style="font-weight:bold;margin-left: 10px;" ></label>
+                            <div id="errLast"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12" style="font-weight:200">
+                        <div class="form-group">
+                            <table class="table table-sm  fz12" style="width:60%">
+                                <thead class="text-uppercase">
+                                    <tr>
+                                        <th scope="col" style="width: 400px;"><strong>Passenger Name</strong></th>
+                                        <th scope="col" style="width: 520px;"><strong>Gender</strong></th>
+                                        <th scope="col" style="width: 520px;"><strong>Seat Number</strong> </th>
+                                        <th scope="col" style="width: 520px;"><strong>Seat Location</strong> </th>
+                                    </tr>
+
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td style="width: 400px;">
+                                            <label for="P1" style="font-weight:bold;margin-left: 10px;" ></label>
+                                        </td>
+                                        <td style="width: 520px;">
+                                            <label for="G1"  ></label>
+                                        </td>
+                                        <td style="width: 520px;">
+                                            <label for="S1" style="font-weight:bold;margin-left: 10px;" ></label>
+                                        </td>
+                                        <td style="width: 520px;">
+                                            <label for="SL1" style="font-weight:bold;margin-left: 10px;"></label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width:400px;">
+                                            <label for="P2" style="font-weight:bold;margin-left: 10px;" ></label>
+                                        </td>
+                                        <td style="width: 520px;">
+                                            <label for="G2"  ></label>
+                                        </td>
+                                        <td style="width: 520px;">
+                                            <label for="S2" style="font-weight:bold;margin-left: 10px;" ></label>
+                                        </td>
+                                        <td style="width: 520px;">
+                                            <label for="SL2" style="font-weight:bold;margin-left: 10px;"></label>
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+

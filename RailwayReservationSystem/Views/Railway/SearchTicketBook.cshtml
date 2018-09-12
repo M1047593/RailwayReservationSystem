@@ -1,0 +1,170 @@
+﻿
+@{
+    ViewBag.Title = "SearchTicketBook";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+    
+}
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<script type='text/javascript'>
+    $(document).ready(function () {
+        $('#Jdate').datepicker({
+            dateFormat: 'mm-dd-yy'
+        });
+        $('#Traintable').hide();
+        
+    });
+
+    function Book(id, source, desination,seatclass,key) {
+
+        var fare = $('#hdnbook_' + key).val();
+        var Jdate = $('#Jdate').val();
+        window.location.href = '/Railway/BookTicket/?id=' + id + '&Source_ID=' + source + '&Destination_ID=' + desination + '&Jdate=' + Jdate + '&fare=' + fare + '&Seatclass=' + seatclass;
+    }
+
+    function CheckAvaliablity(bookid,id, Jdate,key) {
+        debugger
+        var Jdate = $('#Jdate').val();
+        var seatclass = $('#ddlclass').val();
+
+        jQuery.ajax({
+            url: '@Url.Action("CheckAvaliablity", "Railway")',
+            type: "POST",
+            data: { id: id, Jdate: Jdate, seatclass: seatclass },
+            success: function (result) {
+                debugger
+                if (result[0] > 1) {
+                    debugger
+                    $('#' + bookid.id).css("display", "block")
+                    $('#Label_' + key).css("display", "block")
+                    var labelid = 'SL2_' + key;
+                    jQuery("label[for='" + labelid + "']").html(result[0]);
+
+                    $('#hdnbook_' + key).val(result[1]);
+
+
+                }
+                else {
+                    alert('Ticket Not Avaiable');
+                    $('#Label_' + key).css("display", "block")
+                    $('#' + bookid.id).prop('disabled', true);
+                    var labelid = 'SL2_' + key;
+                    jQuery("label[for='" + labelid + "']").html("Not Available");
+                }
+
+               
+            },
+            error: function (errormessage) {
+                alert(errormessage.responseText);
+            }
+        });
+    }
+
+      
+    function Search() {
+        $('#Traintable').show();
+        debugger
+        var Source_ID = $('#ddlstation').val();
+        var Destination_ID = $('#ddltrain').val();
+        var seatclass = $('#ddlclass').val();
+        var Jdate = $('#Jdate').val();
+        $.post('/Railway/SearchTrainSearch/?Source_ID=' + Source_ID + '&Destination_ID=' + Destination_ID + '&Jdate=' + Jdate, function (jData) {
+            var strHtml = '';
+            var keyy= 0;
+            if (jData && jData.length > 0) {
+                debugger
+                $.each(jData, function (key, item) {
+                    strHtml += '<tr>';
+                    strHtml += '<td>' + item.Train_name + '</td>';
+                    strHtml += '<td>' + item.Train_type + '</td>';
+                    strHtml += '<td>' + item.Arrival_time + '</td>';
+                    strHtml += '<td><a href="#"  id="check_'+key+'" onclick="CheckAvaliablity(book_'+key+',' + item.Train_ID + ',' + Jdate+ ','+key +')">Check Availability</a></td>';
+                    strHtml += '<td> <div  id="Label_' + key + '" style="display:none"><label for="SL2_' + key + '" style="font-weight:bold;margin-left: 10px;"></label></div><div id="book_' + key + '" style="display:none"><div><a href="#" id="Edit"  onclick="Book(' + item.Train_ID + ',' + Source_ID + ',' + Destination_ID + ',' + seatclass + ',' + key + ')">Book Ticket</a><input type="hidden" id="hdnbook_' + key + '"/></div></div></td>';
+                    strHtml += '</tr>';
+                   
+                });
+             
+                $('#tbody').html(strHtml);
+       
+                return true;
+            } else {
+                alert('No records found.');
+                $('#tbody').html('');
+                return false;
+            }
+        })
+
+    }
+    </script>
+
+
+
+<fieldset>
+    <legend class="text-center">BooK Your Ticket<span class="req"></span></legend>
+    <div class="row">
+        <div class="col-md-3">
+
+            <label for="source"><span class="req">* </span> Source Station: </label>
+            @Html.DropDownList("Source_ID", ViewBag.Station as SelectList, "Select Source", new { @class = "form-control", id = "ddlstation" })
+            <div id="errLast"></div>
+        </div>
+
+        <div class="col-md-3">
+
+            <label for="source"><span class="req">* </span> Destination Station: </label>
+            @Html.DropDownList("Destination_ID", ViewBag.Station as SelectList, "Select Destination", new { @class = "form-control", id = "ddltrain" })
+            <div id="errLast"></div>
+
+        </div>
+        <div class="col-md-2">
+          
+          
+                <label for="lastname"><span class="req">* </span> Class: </label>
+                <select class="form-control" id="ddlclass">
+                    <option value="-1">Select Class</option>
+                    <option value="1">Class 1</option>
+                    <option value="2">Class 2</option>
+                    <option value="3">Class 3</option>
+                </select>
+                <div id="errLast"></div>
+          
+        </div>
+        <div class="col-md-2">
+
+            <label for="firstname"><span class="req">* </span>Journey Date </label>
+            <input class="form-control" name="Jdate" id="Jdate" required />
+            <div id="errFirst"></div>
+
+        </div>
+
+        <div class="col-md-2">
+            <button type="button" id="btnSearch" class="btn btn-primary" onclick="Search();" style="margin-top:30px;">Search Train</button>
+            <div id="errFirst"></div>
+
+        </div>
+    </div>
+    </fieldset>
+
+<div id="Traintable">
+    <div class="row">
+        <div class="col-12"chdiv">
+                @*<table class="table table-sm  fz12">*@
+                <table id="mytraintable" class="table table-striped table-bordered" style="width:100%">
+                    <thead class="text-uppercase">
+                        <tr>
+                            <th scope="col">Train Name</th>
+                            <th scope="col">Train Type</th>                          
+                            <th scope="col">Arrival time</th>                            
+                            <th scope="col">Availablity</th>
+                            <th scope="col">Action</th>                         
+                        </tr>
+                    </thead>
+                    <tbody class="tbody" id="tbody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+

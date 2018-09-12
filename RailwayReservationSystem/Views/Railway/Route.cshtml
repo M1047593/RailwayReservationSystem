@@ -1,0 +1,139 @@
+﻿
+@{
+    ViewBag.Title = "Route";
+}
+
+<h2 style="text-align:center">Add Route</h2>
+<link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="Stylesheet" type="text/css" />
+
+<script type="text/javascript">
+    $(function () {
+        $("[id*=txtDate]").datepicker();
+    });
+</script>
+<script type="text/javascript">
+    function FillTrainDetail() {
+
+        $.ajax({
+            url: '@Url.Action("FillTrainDetail", "Railway")',
+            type: "GET",
+            data: { Trainname: $('#TrainName').val()},
+            success: function (result) {
+                debugger
+                $('#txtdesid').val(result[0].Destination_stn)
+                $('#stationid').val(result[0].Source_stn)
+                $('#TrainID').val(result[0].Train_ID)
+
+            },
+            error: function (errormessage) {
+                        alert(errormessage.responseText);
+                    }
+                });
+    }
+
+    function FillstationDetail() {
+        var data = $('#Station_Name').val();
+        $('#stopstationid').val(data)
+           
+    }
+
+    
+
+    //});
+</script>
+
+
+
+<form method="post" action="AddRoute" autocomplete="on">
+
+    <div class="col-md-4">
+        <div class="form-group">
+            <label for="source"><span class="req">* </span> Train Name: </label>
+            @Html.DropDownList("TrainName", ViewBag.Train as SelectList, "Select Train",new { @class = "form-control", @onchange="FillTrainDetail()" })
+            <div id="errLast"></div>
+
+        </div>
+        <div class="form-group">
+            <label for="TrainID"><span class="req">* </span> Train ID: </label>
+            <input class="form-control" type="number" name="TrainID" id="TrainID" onkeyup="Validate(this)" required placeholder="TrainID" readonly/>
+            <div id="errFirst"></div>
+        </div>
+        <div class="form-group">
+            <label for="stationid"><span class="req">* </span>Source Station </label>
+            <input class="form-control" type="text" name="stationid" id="stationid" onkeyup="Validate(this)" required placeholder="Source Station" readonly/>
+            <div id="errFirst"></div>
+
+        </div>
+        <div class="form-group">
+            <label for="stationid"><span class="req">* </span>Destination Station: </label>
+            <input class="form-control" type="text" name="txtdesid" id="txtdesid" onkeyup="Validate(this)" required placeholder="Destination Station" readonly />
+            <div id="errFirst"></div>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-md-4">
+        
+        <div class="form-group">
+            <label for="source"><span class="req">* </span> Stop Station Name: </label>
+            @Html.DropDownList("Station_Name", ViewBag.Station as SelectList, "Select Station", new { @class = "form-control", @onchange = "FillstationDetail()" })
+            <div id="errLast"></div>
+        </div>
+        <div class="form-group">
+            <label for="stationid"><span class="req">* </span>Station ID: </label>
+            <input class="form-control" type="number" name="stopstationid" id="stopstationid" onkeyup="Validate(this)" required placeholder="Station ID" readonly/>
+            <div id="errFirst"></div>
+
+        </div>
+        <div class="form-group">
+            <label for="stationid"><span class="req">* </span>Stop Number: </label>
+            <input class="form-control" type="number" name="stopnumber" id="stopnumber" onkeyup="Validate(this)" required placeholder="Stop Number" />
+            <div id="errFirst"></div>
+
+        </div>
+    </div>
+    <div class="col-md-4">
+                
+
+       
+        </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label for="stationid"><span class="req">* </span>Source Distance: </label>
+            <input class="form-control" type="number" name="soucedistance" id="soucedistance" onkeyup="Validate(this)" required placeholder="Source distance" />
+            <div id="errFirst"></div>
+
+        </div>
+
+        <div class="form-group">
+            <label for="stationid"><span class="req">* </span>Arrival Time: </label>
+            <input class="form-control" type="text" name="Arrivaltime" id="stopnumber" onkeyup="Validate(this)" required placeholder="Arrival Time" />
+            <div id="errFirst"></div>
+
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label for="stationid"><span class="req">* </span>Departure Time: </label>
+            <input class="form-control" type="text" name="Departuretime" id="stopnumber" onkeyup="Validate(this)" required placeholder="Departure Time" />
+            <div id="errFirst"></div>
+
+        </div>
+        </div>
+    </div>
+   
+    <div class="row">
+        <div class="col-md-8" style="margin-left:40%">
+            <div class="form-group">
+                <input class="btn btn-success" type="submit" name="submit_reg" value="Submit">
+                <input class="btn btn-success" type="submit" name="submit_reg" value="Cancel">
+            </div>
+        </div>
+    </div>
+
+</form>
+
+
+

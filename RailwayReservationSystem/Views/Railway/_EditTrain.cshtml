@@ -1,0 +1,116 @@
+﻿
+
+
+    <div class="col-md-4">
+        <div class="form-group">
+            <label for="TrainID"><span class="req">* </span> Train ID: </label>
+            <input class="form-control" type="number" name="TrainID" id="txttrainid" onkeyup="Validate(this)" required placeholder="TrainID" />
+            <div id="errFirst"></div>
+        </div>
+        <div class="form-group">
+            <label for="Trainname"><span class="req">* </span> Train name: </label>
+            <input class="form-control" type="text" name="Trainname" id="txtTrainName" onkeyup="Validate(this)" placeholder="TrainName" required />
+            <div id="errLast"></div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label for="source"><span class="req">* </span> Source Station: </label>
+            @* @Html.DropDownList("Source_ID", ViewBag.Station as SelectList, new { @class = "form-control" })*@
+            <input class="form-control" type="text" name="Source_ID" id="Source_ID" onkeyup="Validate(this)" placeholder="TrainName" readonly />
+
+            <div id="errLast"></div>
+
+        </div>
+        <div class="form-group">
+            <label for="source"><span class="req">* </span> Destination Station: </label>
+            @*@Html.DropDownList("Destination_ID", ViewBag.Station as SelectList, new { @class = "form-control" })*@
+            <input class="form-control" type="text" name="Destination_ID" id="Destination_ID" onkeyup="Validate(this)" readonly />
+            <div id="errLast"></div>
+
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label for="lastname"><span class="req">* </span> Train Type: </label>
+            <select class="form-control" name="ddltraintype">
+                <option value="Express">Express</option>
+                <option value="SuperFast">Super Fast</option>
+                <option value="Local">Local</option>
+            </select>
+            <div id="errLast"></div>
+        </div>
+        <div class="form-group">
+            <div><label for="lastname"><span class="req">* </span> Available Days: </label></div>
+            <div>
+                @Html.CheckBox("Monday")
+                <label for="coding">Monday</label>
+                @Html.CheckBox("Tuesday")
+                <label for="music">Tuesday</label>
+            </div>
+            <div>
+                @Html.CheckBox("Wednesday")
+                <label for="music">Wednesday</label>
+                @Html.CheckBox("Thursday")
+                <label for="music">Thursday</label>
+                @Html.CheckBox("Friday")
+                <label for="music">Friday</label>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12" style="width:80%;font-weight:200">
+        <div class="form-group">
+            <table class="table table-sm  fz12" style="width:60%">
+                <thead class="text-uppercase">
+                    <tr>
+                        <th scope="col" style="width: 296px;"><strong>Class</strong></th>
+                        <th scope="col" style="width: 520px;"><strong>Fare</strong></th>
+                        <th scope="col" style="width: 520px;"><strong>Total Seat</strong> </th>
+                    </tr>
+
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="width: 296px;">
+                            First Class
+                        </td>
+                        <td style="width: 520px;">
+                            <input class="form-control" type="text" name="fare1" id="fare1" onkeyup="Validate(this)" placeholder="" required />
+                        </td>
+                        <td style="width: 520px;">
+                            <input class="form-control" type="text" name="totalseat" id="totalseat" onkeyup="Validate(this)" placeholder="" required />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 296px;">
+                            Second Class
+                        </td>
+                        <td style="width: 520px;">
+                            <input class="form-control" type="text" name="fare2" id="fare2" onkeyup="Validate(this)" placeholder="" required />
+                        </td>
+                        <td style="width: 520px;">
+                            <input class="form-control" type="text" name="totalseat2" id="totalseat2" onkeyup="Validate(this)" placeholder="" required />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 296px;">
+                            Third Class
+                        </td>
+                        <td style="width: 520px;">
+                            <input class="form-control" type="text" name="fare3" id="fare3" onkeyup="Validate(this)" placeholder="" required />
+                        </td>
+                        <td style="width: 520px;">
+                            <input class="form-control" type="text" name="totalseat3" id="totalseat3" onkeyup="Validate(this)" placeholder="" required />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group">
+            <input class="btn btn-success" type="submit" name="submit_reg" value="Submit" onclick="return AddTrain();">
+            <input class="btn btn-success" type="submit" name="submit_reg" value="Cancel">
+        </div>
+    </div>

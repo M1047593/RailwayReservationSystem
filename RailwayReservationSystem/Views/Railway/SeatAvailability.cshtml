@@ -1,0 +1,130 @@
+﻿
+@{
+    ViewBag.Title = "SeatAvailability";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/moment.js"></script>
+<script type='text/javascript'>
+    $(document).ready(function () {
+
+        $('#Jdate').datepicker({
+            dateFormat: 'dd-mm-yy'
+        });
+
+    });
+    function FillTrainDetail() {
+        $.ajax({
+            url: '@Url.Action("FillSeatTrainDetail", "Railway")',
+            type: "GET",
+            data: { Trainname: $('#TrainName').val()},
+            success: function (result) {
+                $.each(data.d, function () {
+                    $("#ddlstation").append($("<option     />").val(this.KeyName).text(this.ValueName));
+                });  
+                $.each(data.d, function () {
+                    $("#ddltrain").append($("<option     />").val(this.KeyName).text(this.ValueName));
+                });
+
+            },
+            error: function (errormessage) {
+                        alert(errormessage.responseText);
+                    }
+                });
+    }
+
+    function AddPassenger() {
+                var row = $('"<tr><td><input class="form- control" type="text" name="Name" id="Name" onkeyup="Validate(this)" placeholder="" required /></td><td><input class="form-control" type="text" name="Age" id="Age" onkeyup="Validate(this)" placeholder="" required /></td><td><select class="form-control" name="ddlgender"><option value="Male">Male</option><option value="Female">Female</option><option value="Transgender">Transgender</option></select></td><td><select class="form-control" name="ddlpreference"><option value="Lower">Lower</option><option value="Middle">Middle</option><option value="Upper">Upper</option><option value="SideLower">SideLower</option><option value="SideUpper">SideUpper</option></select></td><td><input class="form-control" type="text" name="Proof" id="Proof" onkeyup="Validate(this)" placeholder="" required /></td></tr>"');
+                $("#tblpass > tbody").append(row);
+    };
+
+    function getval(sel) {
+        $.ajax({
+            url: '@Url.Action("FillClassFare", "Railway")',
+            type: "GET",
+            data: { Trainname: $('#TrainName').val(), classid: sel.value},
+            success: function (result) {
+                debugger
+                $('#Fare').val(result);
+
+
+            },
+            error: function (errormessage) {
+                        alert(errormessage.responseText);
+                    }
+                });
+    }
+
+
+</script>
+
+<div id="divSuccess" class="alert alert-success alert-dismissible" style="display:none">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <strong>Success!</strong> This alert box could indicate a successful or positive action.
+</div>
+<fieldset>
+    <legend class="text-center">Seat Availability<span class="req"></span></legend>
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="source"><span class="req">* </span> Train Name: </label>
+            @Html.DropDownList("TrainName", ViewBag.Train as SelectList, new { @class = "form-control", @onchange = "FillTrainDetail()" })
+            <div id="errFirst"></div>
+        </div>
+        <div class="form-group">
+            <label for="email"><span class="req">* </span> Train Number: </label>
+            <input class="form-control" required type="number" name="TrainID" id="TrainID"  />
+            <div class="status" id="status"></div>
+        </div>
+
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label for="source"><span class="req">* </span> Source Station: </label>
+            @Html.DropDownList("Source_ID", ViewBag.Station as SelectList, new { @class = "form-control", id = "ddlstation" })
+            <div id="errLast"></div>
+
+        </div>
+        <div class="form-group">
+            <label for="source"><span class="req">* </span> Destination Station: </label>
+            @Html.DropDownList("Destination_ID", ViewBag.Station as SelectList, new { @class = "form-control", id = "ddltrain" })
+            <div id="errLast"></div>
+
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="firstname"><span class="req">* </span>Journey Date </label>
+            <input class="form-control" name="text" id="Jdate" value="@ViewBag.Journeydate" required />
+            <div id="errFirst"></div>
+        </div>
+        <div class="form-group">
+            <label for="lastname"><span class="req">* </span> Class: </label>
+            <select class="form-control" onchange="getval(this);">
+                <option value="-1">Select Class</option>
+                <option value="Fare_Class1">Class 1</option>
+                <option value="Fare_Class2">Class 2</option>
+                <option value="Fare_Class3">Class 3</option>
+            </select>
+            <div id="errLast"></div>
+        </div>
+
+    </div>    
+    <div class="col-md-12" style="margin-left:30%">
+        <div class="form-group">
+            <input class="btn btn-success" type="submit" name="submit_reg" value="Get Availability" onclick="return AddReservation();">
+            <input class="btn btn-success" type="submit" name="submit_reg" value="Clear">
+        </div>
+    </div>
+</fieldset>
+
+
+
+
+
+
+
+
+
+
+

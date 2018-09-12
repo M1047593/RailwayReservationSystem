@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="72e5dbd7bc9948eb8757bfe335d1689c" Name="Diagram1">
+        <EntityTypeShape EntityType="RailwaySystemModel.Admin_table" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="RailwaySystemModel.Days_Available" Width="1.5" PointX="7.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="RailwaySystemModel.Passenger" Width="1.5" PointX="5.25" PointY="1.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RailwaySystemModel.Passenger_ticket" Width="1.5" PointX="5.25" PointY="4.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="RailwaySystemModel.Reservation" Width="1.5" PointX="7.5" PointY="10.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="RailwaySystemModel.Route" Width="1.5" PointX="5.25" PointY="7.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="RailwaySystemModel.Route_HAS_Station" Width="1.5" PointX="7.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="RailwaySystemModel.RS_Registration" Width="1.5" PointX="7.75" PointY="6.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="RailwaySystemModel.Station" Width="1.5" PointX="0.75" PointY="6.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RailwaySystemModel.Train" Width="1.5" PointX="3" PointY="5.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="RailwaySystemModel.Train_class" Width="1.5" PointX="9.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="RailwaySystemModel.Train_status1" Width="1.5" PointX="5.25" PointY="10.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="RailwaySystemModel.User_table" Width="1.5" PointX="9.75" PointY="4.75" IsExpanded="true" />
+        <AssociationConnector Association="RailwaySystemModel.FK__Passenger__Train__4BAC3F29" ManuallyRouted="false" />
+        <AssociationConnector Association="RailwaySystemModel.FK__Passenger__Train__4E88ABD4" ManuallyRouted="false" />
+        <AssociationConnector Association="RailwaySystemModel.FK__Reservation__628FA481" ManuallyRouted="false" />
+        <AssociationConnector Association="RailwaySystemModel.FK__Route__Train_ID__656C112C" ManuallyRouted="false" />
+        <AssociationConnector Association="RailwaySystemModel.FK__Train__Destinati__45F365D3" ManuallyRouted="false" />
+        <AssociationConnector Association="RailwaySystemModel.FK__Train__Source_ID__44FF419A" ManuallyRouted="false" />
+        <AssociationConnector Association="RailwaySystemModel.FK__Train_sta__Train__5165187F" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
