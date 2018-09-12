@@ -7,6 +7,9 @@ using RS.Business;
 using RS.Data;
 using System.Web.UI;
 using System.Runtime.InteropServices;
+using SendGrid;
+using SendGrid.Helpers.Mail;
+using System.Threading.Tasks;
 
 namespace RailwayReservationSystem.Controllers
 {
@@ -22,6 +25,7 @@ namespace RailwayReservationSystem.Controllers
 
         public ActionResult Login()
         {
+            sendemail();
             return View();
         }
 
@@ -275,7 +279,14 @@ namespace RailwayReservationSystem.Controllers
         {
             string flag = _railwaybus.SaveBookticket(TrainID, ddlstation, ddltrain, Jdate, Fare, mnumber, Name, Age, ddlgender, ddlpreference, ddlproof, Noofticket, Name1, Age1, ddlgender1, ddlpreference1, ddlproof1);
             string[] str = flag.Split(',');
-            return Json(str, JsonRequestBehavior.AllowGet);
+            if (flag != "0")
+            {
+                sendemail();
+               return Json(str, JsonRequestBehavior.AllowGet);
+            }
+            else
+                return Json("", JsonRequestBehavior.AllowGet);
+           
         }
 
 
@@ -327,6 +338,132 @@ namespace RailwayReservationSystem.Controllers
         public ActionResult TransactionHistory()
         {
             return View();
+
+        }
+
+        public void sendemail()
+        {
+            var apiKey = "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";
+            var client = new SendGridClient(apiKey);
+            var msg = new SendGridMessage()
+            {
+                From = new EmailAddress("kannan.eee89@gmail.com", "Kannan"),
+                Subject = "Booking Confirmation on IRCTC, Train: 16796, 25-Aug-2018, SL, TJ - MS",
+                PlainTextContent = "Hello, Email!",
+                HtmlContent = @"
+<html>
+<head>
+<meta charset=""utf-8"" />
+<title></title>
+</head>
+<body>
+    <table style=""width:60%;margin-left: 10%;"">
+        <tr>
+            <td>
+                Train ID : 
+            </td>
+            <td >
+                Train Name :
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Boarding At  :
+            </td>
+            <td>
+                Reservation Up to :	
+            </td>
+        </tr>
+        <tr>
+            <td>
+                PNR Number :
+            </td>
+            <td>
+                Class :
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Date of Booking :
+            </td>
+            <td>
+                Date of Journey :
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Amount :
+            </td>
+            <td>
+                Scheduled Departure* :
+            </td>
+        </tr>
+    </table>
+
+
+
+    <div class=""col-md-12"" style=""font-weight:200"">
+        <div class=""form-group"">
+            <table class=""table table-sm fz12"" style=""width:60%;margin-top: 50px;margin-left: 10%;"">
+                <thead class=""text-uppercase"">
+                    <tr>
+                        <th scope = ""col"" style=""width: 400px;""><strong>Passenger Name</strong></th>
+                        <th scope = ""col"" style= ""width: 520px;""><strong>Gender</strong></th>                        
+                        <th scope = ""col"" style=""width: 520px;""><strong>Age</strong> </th>
+                        <th scope = ""col"" style=""width: 520px;""><strong>Seat Number</strong> </th>
+                        <th scope = ""col"" style= ""width: 520px;""><strong>Seat Location</strong> </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style = ""text-align: center;"">
+                            Name :
+                        </td>
+                        <td style = ""text-align: center;"">
+                            Age:
+                        </td>
+                        <td style = ""text-align: center;"">
+                            Name :
+                        </td>
+                        <td style = ""text-align: center;"">
+                            Age:
+                        </td>
+                        <td style = ""text-align: center;"">
+                            Name :
+                        </td>
+                        
+                    </tr>
+                    <tr>
+                        <td style = ""text-align: center;"">
+                            Name :
+                        </td>
+                        <td style = ""text-align: center;"">
+                            Age:
+                        </td>
+                        <td style = ""text-align: center;"">
+                            Name :
+                        </td>
+                        <td style = ""text-align: center;"">
+                            Age:
+                        </td>
+                        <td style = ""text-align: center;"">
+                            Name :
+                        </td>
+
+                    </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+</body>
+</html>"
+            };
+            msg.AddTo(new EmailAddress("Kannan.eee89@gmail.com", "Admin"));
+            var response = client.SendEmailAsync(msg);
+
 
         }
 

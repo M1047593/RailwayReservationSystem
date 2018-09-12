@@ -397,9 +397,22 @@ namespace RS.Repository.Admin
             SqlDataAdapter da = new SqlDataAdapter(cmd);
             DataTable dt = new DataTable();
             da.Fill(dt);
-            string i = (dt.Rows[0][0].ToString()) + "," + (dt.Rows[0][1].ToString())+","+(dt.Rows[0][2].ToString()+","+ dt.Rows[1][0].ToString()) + "," + (dt.Rows[1][1].ToString()) + "," + (dt.Rows[1][2].ToString());
 
-            return i;
+            if (dt.Columns[0].Table.Rows.Count >= 1)
+            {
+                //string i = (dt.Rows[0][0].ToString()) + "," + (dt.Rows[0][1].ToString());
+                //return i;
+                string i = (dt.Rows[0][0].ToString()) + "," + (dt.Rows[0][1].ToString()) + "," + (dt.Rows[0][2].ToString() + "," + dt.Rows[1][0].ToString()) + "," + (dt.Rows[1][1].ToString()) + "," + (dt.Rows[1][2].ToString());
+
+                return i;
+            }
+            else
+            {
+                string i = "0";
+                return i;
+            }
+
+            
 
         }
 
