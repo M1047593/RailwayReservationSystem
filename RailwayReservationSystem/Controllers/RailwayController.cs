@@ -25,7 +25,7 @@ namespace RailwayReservationSystem.Controllers
 
         public ActionResult Login()
         {
-            sendemail();
+            //sendemail();
             return View();
         }
 
