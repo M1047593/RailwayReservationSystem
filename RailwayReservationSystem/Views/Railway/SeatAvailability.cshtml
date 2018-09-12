@@ -15,10 +15,11 @@
 
     });
     function FillTrainDetail() {
+        $('#TrainID').val($('#ddltrain').val());
         $.ajax({
             url: '@Url.Action("FillSeatTrainDetail", "Railway")',
             type: "GET",
-            data: { Trainname: $('#TrainName').val()},
+            data: { Trainname: $('#ddltrain').val()},
             success: function (result) {
                 $.each(data.d, function () {
                     $("#ddlstation").append($("<option     />").val(this.KeyName).text(this.ValueName));
@@ -68,7 +69,7 @@
     <div class="col-md-6">
         <div class="form-group">
             <label for="source"><span class="req">* </span> Train Name: </label>
-            @Html.DropDownList("TrainName", ViewBag.Train as SelectList, new { @class = "form-control", @onchange = "FillTrainDetail()" })
+            @Html.DropDownList("TrainName", ViewBag.Train as SelectList, new { @class = "form-control", @onchange = "FillTrainDetail()",id="ddltrain" })
             <div id="errFirst"></div>
         </div>
         <div class="form-group">
