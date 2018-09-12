@@ -78,19 +78,25 @@
     </style>
     <script type="text/javascript">
 
-       function Login() {
+       @*function Login() {
            jQuery.ajax({
                     url: '@Url.Action("Checkuser", "Railway")',
             type: "POST",
             data: { username: $('#UserName').val(), password: $('#Password').val()},
-            success: function (result) {
-                window.location.href = ("/Railway/Station");                
+            success: function (result) {              
+                Get();                           
                     },
             error: function (errormessage) {
                         alert(errormessage.responseText);
                     }
                 });
-            }
+        }*@
+
+        function Login() {
+            $.post('http://railwayreservationapiservices.azurewebsites.net/api/Reservation/ValidateLogin', { UserName: $('#UserName').val(), Password: $('#Password').val() }, function (jData) {
+                window.location.href = ("/Railway/Station"); 
+            });
+        }
 
     </script>
 

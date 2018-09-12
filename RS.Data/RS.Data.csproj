@@ -55,6 +55,7 @@
     <Compile Include="Entity\Admin_table.cs" />
     <Compile Include="Entity\DataTableAjaxPostModel.cs" />
     <Compile Include="Entity\Days_Available.cs" />
+    <Compile Include="Entity\Login.cs" />
     <Compile Include="Entity\Passenger.cs" />
     <Compile Include="Entity\Passenger_ticket.cs" />
     <Compile Include="Entity\RailwayReservationDB.cs" />
