@@ -94,7 +94,11 @@
 
         function Login() {
             $.post('http://railwayreservationapiservices.azurewebsites.net/api/Reservation/ValidateLogin', { UserName: $('#UserName').val(), Password: $('#Password').val() }, function (jData) {
-                window.location.href = ("/Railway/Station"); 
+                var user = $('#UserName').val();
+                if (user=="Kannan")
+                    window.location.href = ("/Railway/Station"); 
+                else
+                    window.location.href = ("/Railway/SearchTrain"); 
             });
         }
 

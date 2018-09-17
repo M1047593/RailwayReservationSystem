@@ -23,5 +23,7 @@ namespace RS.Data
         public Nullable<int> Age { get; set; }
         public Nullable<System.DateTime> Date_Of_Birth { get; set; }
         public string Email { get; set; }
+
+        public string Upload { get; set; }
     }
 }

@@ -10,12 +10,31 @@ using System.Runtime.InteropServices;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 using System.Threading.Tasks;
+using System.Configuration;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Blob;
+using System.IO;
+using StackExchange.Redis;
+using Newtonsoft.Json;
+
 
 namespace RailwayReservationSystem.Controllers
 {
     public class RailwayController : Controller
     {
         // GET: Railway
+        public Lazy<ConnectionMultiplexer> connection;
+        public IDatabase cache;
+        public RailwayController()
+        {
+            var lazyConnection = new Lazy<ConnectionMultiplexer>(() =>
+            {
+                string cacheConnection = ConfigurationManager.AppSettings["CacheConnection"].ToString();
+                return ConnectionMultiplexer.Connect(cacheConnection);
+            });
+
+            cache = lazyConnection.Value.GetDatabase();
+        }
 
         RS.Business.RailwayBuss _railwaybus = new RailwayBuss();
         public ActionResult Index()
@@ -41,6 +60,7 @@ namespace RailwayReservationSystem.Controllers
             var data = _railwaybus.SaveUser(Registration);
             return Json("Success", JsonRequestBehavior.AllowGet);
         }
+
 
         public ActionResult Registration()
         {
@@ -90,6 +110,7 @@ namespace RailwayReservationSystem.Controllers
             bool flag = _railwaybus.SaveTrain(txttrainid, txtTrainName, Source_ID, Destination_ID, ddltraintype, availabledays, fare1, fare2, fare3, totalseat, totalseat2, totalseat3);
             if (flag == true)
                 ViewBag.TheResult = true;
+            cache.KeyDelete("gettrain");
             return RedirectToAction("ManageTrain");
         }
         public ActionResult Route()
@@ -143,12 +164,21 @@ namespace RailwayReservationSystem.Controllers
 
         public JsonResult GetAllTrain(DataTableAjaxPostModel model)
         {
-            // action inside a standard controller
+            //var lazyConnection = new Lazy<ConnectionMultiplexer>(() =>
+            //{
+            //    string cacheConnection = ConfigurationManager.AppSettings["CacheConnection"].ToString();
+            //    return ConnectionMultiplexer.Connect(cacheConnection);
+            //});
+
+            // Connection refers to a property that returns a ConnectionMultiplexer
+            // as shown in the previous example.
+
             int filteredResultsCount;
             int totalResultsCount;
             var searchBy = (model.search != null) ? model.search.value : null;
             var take = model.length;
             var skip = model.start;
+            List<Train> myDeserializedObjList = new List<RS.Data.Train>();
 
             string sortBy = "";
             bool sortDir = true;
@@ -159,10 +189,16 @@ namespace RailwayReservationSystem.Controllers
                 sortBy = model.columns[model.order[0].column].data;
                 sortDir = model.order[0].dir.ToLower() == "asc";
             }
-            var res = _railwaybus.GetDataFromDbase(searchBy, take, skip, sortBy, sortDir, out filteredResultsCount, out totalResultsCount);
-
-            var result = new List<Train>(res.Count);
-            foreach (var s in res)
+            if (!cache.StringGet("gettrain").HasValue)
+            {
+                var res = _railwaybus.GetDataFromDbase(searchBy, take, skip, sortBy, sortDir, out filteredResultsCount, out totalResultsCount);
+                cache.StringSet("gettrain", JsonConvert.SerializeObject(res));
+                myDeserializedObjList = (List<Train>)Newtonsoft.Json.JsonConvert.DeserializeObject(cache.StringGet("gettrain"), typeof(List<Train>));
+            }
+            else
+                myDeserializedObjList = (List<Train>)Newtonsoft.Json.JsonConvert.DeserializeObject(cache.StringGet("gettrain"), typeof(List<Train>));
+            var result = new List<Train>(myDeserializedObjList.Count);
+            foreach (var s in myDeserializedObjList)
             {
                 // simple remapping adding extra info to found dataset
                 result.Add(new Train
@@ -172,16 +208,16 @@ namespace RailwayReservationSystem.Controllers
                     Train_type = s.Train_type,
                     Source_stn = s.Source_stn,
                     Destination_stn = s.Destination_stn,
-                    AvailableSeat = 200
+                   
                 });
             };
-
+            
             return Json(new
             {
                 // this is what datatables wants sending back
                 draw = model.draw,
-                recordsTotal = totalResultsCount,
-                recordsFiltered = filteredResultsCount,
+                recordsTotal = 20,
+                recordsFiltered = 10,
                 data = result
             });
         }
@@ -466,6 +502,120 @@ namespace RailwayReservationSystem.Controllers
 
 
         }
+
+        [HttpPost]
+        public ActionResult UploadFiles()
+        {
+            // Checking no of files injected in Request object  
+            if (Request.Files.Count > 0)
+            {
+                try
+                {
+                    CloudStorageAccount cloudStorageAccount = GetConnectionString();
+                    CloudBlobClient cloudBlobClient = cloudStorageAccount.CreateCloudBlobClient();
+                    CloudBlobContainer cloudBlobContainer = cloudBlobClient.GetContainerReference("reservationsystemcontainer");
+
+                    //  Get all files from Request object  
+                    HttpFileCollectionBase files = Request.Files;
+                    for (int i = 0; i < files.Count; i++)
+                    {
+                        //string path = AppDomain.CurrentDomain.BaseDirectory + "Uploads/";  
+                        string filename = Path.GetFileName(Request.Files[i].FileName);  
+
+                        HttpPostedFileBase file = files[i];
+                        string fname;
+                        CloudBlockBlob azureBlockBlob = cloudBlobContainer.GetBlockBlobReference(filename);
+                        azureBlockBlob.UploadFromStream(Request.Files[i].InputStream);
+
+
+                        //// Checking for Internet Explorer  
+                        //if (Request.Browser.Browser.ToUpper() == "IE" || Request.Browser.Browser.ToUpper() == "INTERNETEXPLORER")
+                        //{
+                        //    string[] testfiles = file.FileName.Split(new char[] { '\\' });
+                        //    fname = testfiles[testfiles.Length - 1];
+                        //}
+                        //else
+                        //{
+                        //    fname = file.FileName;
+                        //}
+
+                        //// Get the complete folder path and store the file inside it.  
+                        //fname = Path.Combine(Server.MapPath("~/Uploads/"), fname);
+                        //file.SaveAs(fname);
+                    }
+                    // Returns message that successfully uploaded  
+                    return Json("File Uploaded Successfully!");
+                }
+                catch (Exception ex)
+                {
+                    return Json("Error occurred. Error details: " + ex.Message);
+                }
+            }
+            else
+            {
+                return Json("No files selected.");
+            }
+        }
+
+
+        //public static void UploadSupportingDocuments(string filename)
+        //{
+        //    long id = Convert.ToInt64(Request.Form["ID"]);
+        //    if (Request.Files.Count > 0)
+        //    {
+        //        CloudStorageAccount cloudStorageAccount = GetConnectionString();
+        //        CloudBlobClient cloudBlobClient = cloudStorageAccount.CreateCloudBlobClient();
+        //        CloudBlobContainer cloudBlobContainer = cloudBlobClient.GetContainerReference(ConfigurationManager.AppSettings["ContainerName"]);
+
+        //        //for (int fileNum = 0; fileNum < Request.Files.Count; fileNum++)
+        //        //{
+        //            string fileName = filename;//Path.GetFileName(Request.Files[fileNum].FileName);
+        //          //  if (Request.Files[fileNum] != null &&
+        //            //Request.Files[fileNum].ContentLength > 0)
+        //            //{
+        //                CloudBlockBlob azureBlockBlob = cloudBlobContainer.GetBlockBlobReference(fileName);
+        //                azureBlockBlob.UploadFromStream(Request.Files[fileNum].InputStream);
+        //                //SupportingDocument detail = new SupportingDocument();
+        //                //detail.TempPolicyNo = id;
+        //                //detail.FileName = fileName;
+        //                //detail.CreatedBy = (int)Session["UserId"];
+        //                //if (fileNum == 0)
+        //                //    detail.DisplayFileName = "Aadhar Document";
+        //                //else if (fileNum == 1)
+        //                //    detail.DisplayFileName = "Pan Document";
+        //                //else if (fileNum == 2)
+        //                //    detail.DisplayFileName = "Medical Checkup Document";
+        //                //manager.InsertSupportingDocument(detail);
+        //            }
+        //            fileNum += 1;
+        //        }
+        //    }
+        //    //List<SupportingDocument> listDocument = manager.GetSupportingDocument(id);
+        //    //return Json(listDocument, JsonRequestBehavior.AllowGet);
+
+        //}
+
+        public static CloudStorageAccount GetConnectionString()
+        {
+            string accountname = "301chennai";// ConfigurationManager.AppSettings["accountName"];
+            string key = "5v4AEFp2B/1RsqauelgHm79O8Ml27Vi0IT8FbML7Ao0NEDEIUnI7SvJIAEABnDPUr+k2e1DpLCPK1NVKlHG0SQ==";// ConfigurationManager.AppSettings["key"];
+            string connectionString = string.Format("DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1}", accountname, key);
+            return CloudStorageAccount.Parse(connectionString);
+        }
+
+        public FileResult DownloadSupportingDocument(string fileName)
+        {
+            CloudStorageAccount cloudStorageAccount = GetConnectionString();
+            CloudBlobClient cloudBlobClient = cloudStorageAccount.CreateCloudBlobClient();
+            CloudBlobContainer cloudBlobContainer = cloudBlobClient.GetContainerReference("reservationsystemcontainer");
+            CloudBlockBlob azureBlockBlob = cloudBlobContainer.GetBlockBlobReference(fileName);
+            Stream blobStream = azureBlockBlob.OpenRead();
+            return File(blobStream, azureBlockBlob.Properties.ContentType, fileName);
+        }
+
+
+
+
 
 
 
